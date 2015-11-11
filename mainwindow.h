@@ -9,6 +9,11 @@
 #include <QJsonObject>
 #include <QPushButton>
 #include <QDebug>
+#include <QWebView>
+#include <QUrl>
+#include <QLayout>
+#include <QSizePolicy>
+#include <QDir>
 
 namespace Ui {
 class MainWindow;
@@ -29,6 +34,7 @@ public:
     int t;
     int p;
     int s;
+    int n;
     std::vector<int> rt;
     std::vector<int> ut;
     std::vector<int> time;
@@ -44,6 +50,8 @@ private:
 private slots:
     void readJSON();
     void reshenie();
+    void addHTML();
+    void viewHTML();
 
 };
 
