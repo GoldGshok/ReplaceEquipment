@@ -8,6 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     connect(ui->readFile,SIGNAL(triggered(bool)),SLOT(readJSON()));
+    connect(ui->btnOK,SIGNAL(pressed()),SLOT(btnOKPressed()));
+    connect(ui->checkCost,SIGNAL(pressed()),SLOT(checkPercent()));
 }
 
 MainWindow::~MainWindow()
@@ -34,7 +36,6 @@ void MainWindow::f1()
     }
 
     f.push_back(temp);
-    //return temp;
 }
 
 void MainWindow::fn(int t)
@@ -45,6 +46,10 @@ void MainWindow::fn(int t)
         f1();
     }else{
         fn(t-1);
+    }
+
+    if (percent != 0){
+        s = s * (100 - percent) / 100;
     }
 
     for (int i = 0; i < time.size(); i++){
@@ -60,8 +65,20 @@ void MainWindow::fn(int t)
             }
         }
     }
-
     f.push_back(temp);
+}
+
+QTableWidget *MainWindow::createTable()
+{
+    QTableWidget *TempTable = new QTableWidget(2,time.size(),this);
+
+    QStringList verticalHeader;
+    verticalHeader.append("rt");
+    verticalHeader.append("ut");
+
+    TempTable->setVerticalHeaderLabels(verticalHeader);
+
+    return TempTable;
 }
 
 void MainWindow::readJSON()
@@ -83,10 +100,15 @@ void MainWindow::readJSON()
     if (!document.isNull()){
         QJsonObject object = document.object();
 
+        time.clear();
+        rt.clear();
+        ut.clear();
+
         t = object["t"].toString().toInt();
         s = object["s"].toString().toInt();
         p = object["p"].toString().toInt();
         n = object["n"].toString().toInt();
+        percent = object["percent"].toString().toInt();
         int tempTime = object["time"].toString().toInt();
 
         //таблица времени
@@ -182,30 +204,34 @@ void MainWindow::addHTML()
             << QString("\n").toUtf8();
 
         //вывод цепочки
-        out << QString("<p>")
-               .arg(n)
-               .arg(t)
+        out << QString("<table border=1 align=center>"
+                       "<th>F_i</th>"
+                       "<th>Год эксплуатации</th>"
+                       "<th>Замена</th>")
                .toUtf8();
 
         std::vector<int> replace;
         int temp = t;
         int step = 1;
         for (int i = n-1; i >= 0; i--){
-            out << QString(" f_%1(%2) ->")
+            out << QString("<tr><td><center> f_%1 </center></td><td><center>%2</center></td>")
                    .arg(i+1)
                    .arg(temp)
                    .toUtf8();
 
             if (temp >= graniza[i]){
+                out << QString("<td><center>x</center></td>").toUtf8();
                 replace.push_back(step);
                 temp = 1;
             }else{
+                out << QString("<td> </td>").toUtf8();
                 temp++;
             }
             step++;
+            out << QString("</tr>").toUtf8();
         }
 
-        out << QString("</p>").toUtf8();
+        out << QString("</table>").toUtf8();
 
         if (replace.size() == 0){
             out << QString("<p>Замена не требуется!</p>").toUtf8();
@@ -253,4 +279,73 @@ void MainWindow::viewHTML()
 
     d->deleteLater();
 
+}
+
+void MainWindow::btnOKPressed()
+{
+    time.clear();
+    rt.clear();
+    ut.clear();
+
+    n = ui->editN->text().toInt();
+    s = ui->editS->text().toInt();
+    p = ui->editP->text().toInt();
+    t = ui->editT->text().toInt();
+    int tempTime = ui->editTime->text().toInt();
+    if (ui->checkCost->isChecked()){
+        percent = ui->editPercent->text().toInt();
+    }
+
+    //таблица времени
+    for (int i = 0; i < tempTime; i++){
+        time.push_back(i);
+    }
+
+    QDialog *d = new QDialog();
+
+    QSizePolicy sizePolicy;
+
+    sizePolicy.setVerticalPolicy(QSizePolicy::Fixed);
+    sizePolicy.setHorizontalPolicy(QSizePolicy::Fixed);
+
+    d->setSizePolicy(sizePolicy);
+
+    d->setGeometry(100, 100, 800, 600);
+
+    QVBoxLayout *l = new QVBoxLayout();
+    d->setLayout(l);
+
+    QPushButton *btn = new QPushButton();
+    btn->setText("OK");
+
+    connect(btn,SIGNAL(pressed()),SLOT(addTableValues()));
+    connect(btn,SIGNAL(released()),d,SLOT(deleteLater()));
+    connect(btn,SIGNAL(released()),SLOT(reshenie()));
+    connect(btn,SIGNAL(released()),SLOT(viewHTML()));
+
+    table = createTable();
+
+    l->addWidget(table);
+    l->addWidget(btn);
+
+    d->exec();
+}
+
+void MainWindow::addTableValues()
+{
+    for(int i = 0; i < time.size(); i++){
+        rt.push_back(table->item(0,i)->text().toInt());
+        ut.push_back(table->item(1,i)->text().toInt());
+    }
+}
+
+void MainWindow::checkPercent()
+{
+    if (!ui->checkCost->isChecked()){
+        ui->editPercent->setEnabled(true);
+        //ui->edtBeginMaterials->setEnabled(true);
+    }else{
+        //ui->labelBeginMaterials->setEnabled(false);
+        ui->editPercent->setEnabled(false);
+    }
 }

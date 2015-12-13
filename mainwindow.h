@@ -14,6 +14,7 @@
 #include <QLayout>
 #include <QSizePolicy>
 #include <QDir>
+#include <QTableWidget>
 
 namespace Ui {
 class MainWindow;
@@ -35,11 +36,14 @@ public:
     int p;
     int s;
     int n;
+    int percent = 0;
     std::vector<int> rt;
     std::vector<int> ut;
     std::vector<int> time;
     std::vector<int> graniza;
     std::vector<st> f;
+
+    QTableWidget *table;
 
 private:
     Ui::MainWindow *ui;
@@ -47,11 +51,16 @@ private:
     void f1();
     void fn(int t);
 
+    QTableWidget *createTable();
+
 private slots:
     void readJSON();
     void reshenie();
     void addHTML();
     void viewHTML();
+    void btnOKPressed();
+    void addTableValues();
+    void checkPercent();
 
 };
 
