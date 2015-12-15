@@ -6,24 +6,46 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>663</width>
-    <height>414</height>
+    <width>657</width>
+    <height>282</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>90</y>
+      <y>20</y>
       <width>542</width>
-      <height>165</height>
+      <height>191</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLabel" name="label_6">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="baseSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Введите исходные данные</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
@@ -131,7 +153,7 @@
      <item>
       <widget class="QPushButton" name="btnOK">
        <property name="text">
-        <string>Заполнить начальные данные</string>
+        <string>НАЧАЛЬНЫЕ УСЛОВИЯ</string>
        </property>
       </widget>
      </item>
@@ -143,7 +165,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>663</width>
+     <width>657</width>
      <height>21</height>
     </rect>
    </property>
